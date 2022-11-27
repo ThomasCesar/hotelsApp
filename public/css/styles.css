@@ -15,6 +15,6 @@
 
     /* other */
     --box_shadow:0 13px 27px -5px #32325d40,0 8px 16px -8px #0000004d,0 -6px 16px -6px #00000008;
-    --box_shadow_light:0 13px 27px -5px #32325d40,0 8px 16px -8px #0000004d,0 -6px 16px -6px #00000008;
+    --box_shadow_light: 0 0 10px 10px rgba(0,0,0,0.05);
 
 }

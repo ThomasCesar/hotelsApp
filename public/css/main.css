@@ -45,6 +45,12 @@ h1, h2, h3, h4{
 p{
     font-weight: 300;
 }
+h1, h2{
+    margin-bottom: 1.5rem;
+}
+h3, h4, p{
+    margin-bottom: 1rem;
+}
 
 /* ============================ NAV BAR */
 
@@ -138,10 +144,20 @@ a[class^='btn-']{
     background: var(--primary);
     color: #ffffff;
 }
-:is(a,button).btn-primary-light{
-    background: var(--primary_light);
+:is(a,button).btn-gray{
+    background: #eee;
     color: black;
 }
+:is(a,button).btn-small{
+    text-transform: none;
+    line-height: 2rem;
+    padding: 0 1rem;
+}
+
+:is(a,button)[class^='btn-']:hover{
+    opacity: 0.85;
+}
+
 
 /* ============================ other */
 
@@ -166,19 +182,33 @@ a[class^='btn-']{
     padding-block:2rem ;
 }
 .hotels-list{
-    display: flex;
+    display: grid;
     gap: 1rem;
-    flex-wrap: wrap;
+    grid-template-columns: repeat( 3 , 1fr);
 
 }
 .hotels-list .hotel {
     flex: 30%;
     flex-grow: 1;
     border-radius: 8px;
-    box-shadow: var(--box_shadow);
+    box-shadow: var(--box_shadow_light);
+    overflow: hidden;
+    position: relative;
+}
+.hotels-list .hotel img{
+    height: 250px;
+    object-fit: cover;
 }
 .hotels-list .hotel .hotel-text{
     padding: 1rem;
+}
+.hotels-list .hotel .hotel-text p{
+    max-height: 50px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.hotels-list .hotel .hotel-button{
+    text-align: right;
 }
 .hotels-detectbottom{
     position: absolute;
@@ -202,4 +232,7 @@ svg path.svg-primary{
 }
 .primary-light{
     color: var(--primary_light);
+}
+.light{
+    opacity: 0.8;
 }

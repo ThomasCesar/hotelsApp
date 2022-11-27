@@ -19,17 +19,24 @@
         <div></div>
     </div>
 
-    <form class="searchbox">
+    <form class="searchbox" id="userFilters">
         <div>
-            <p>Du</p>
-            <input type="date" name="" placeholder="Du">
+            <p>Pays</p>
+            <select name="country">
+                <option value="ESP">Spain</option>
+                <option value="GBA">Great-Britain</option>
+            </select>
         </div>
         <div>
-            <p>Au</p>
-            <input type="date" name="" placeholder="Au">
+            <p>Departure</p>
+            <input type="date" name="departure" placeholder="Du" value="2022-12-01">
         </div>
         <div>
-            <button class="btn-primary">
+            <p>Return</p>
+            <input type="date" name="return" placeholder="Au" value="2023-01-25">
+        </div>
+        <div>
+            <button class="btn-primary" id="filterHotelsBtn" type="button">
                 <i class="las la-hotel"></i> Chercher
             </button>
         </div>
@@ -45,45 +52,126 @@
 
 <%- include('partials/footer') %>
 
+<!-- ==================================== JAVASCRIPT -->
+
 <script>
 
-    const detectbottom = document.getElementById('detectbottom');
-    const hotelslist = document.getElementById('hotelslist');
-    (function() {
-        
-    fetch(`https://jsonplaceholder.typicode.com/posts`)
-    .then((response) => response.json())
-    .then((results) => {
-        randomQuotes = results;
-        let nbRandomQuotes = randomQuotes.length;
+    /* *************** init vars */
 
-        // initialise observer
+    const detectbottom = document.getElementById('detectbottom')
+    const hotelslist = document.getElementById('hotelslist')
+    const filterHotelsBtn = document.getElementById('filterHotelsBtn')
+    const userFilters = document.getElementById('userFilters')
+
+    /* *************** init fetch hotels on button click */
+
+    let filterHotels = () =>{
+        fetchMoreHotels( ( hotels )=>{
+            if( !hotels )
+            {
+                return
+            }
+            hotels.forEach(hotel => {
+                hotelslist.innerHTML += buildHotel( hotel );
+            });
+        })
+    }
+
+    /* *************** fetch more hotels */
+
+    let moreHotelsQuery = null
+    let fetchMoreHotels = ( callback = null ) =>{
+
+        const userFitlersData = new FormData( userFilters )
+        const theFiltersPayload = {};
+        userFitlersData.forEach((value, key) => (theFiltersPayload[key] = value));
+
+        fetch("/hotels",
+        {
+            method: "POST",
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8'
+            },
+            body: JSON.stringify( { ...theFiltersPayload, ...{moreHotelsQuery}} )
+        })
+        .then((result)=>{
+            return result.json();
+        }).then((result)=>{
+
+            // process the pagination and the next load
+
+            if( result.pagination.next )
+            {
+                moreHotelsQuery = result.pagination.next
+            }
+            
+            // build all hotel cards
+
+            if( result.data )
+            {
+                result.data.forEach(hotelData => {
+                    const oneHotelHTML = buildHotel( hotelData )
+                    hotelslist.innerHTML += oneHotelHTML
+                });
+            }
+        })
+    }
+
+    /* *************** build single hotel card */
+
+    let buildHotel = ( data ) =>{
+        console.log( data )
+        let hotelName = data.name
+        let hotelId = data.hotelId
+        let hotelCity = data.address.city
+        let hotelDesc = data.description.short
+        let hotelPic = null
+        if( data.images )
+        {
+            hotelPic = data.images[0].url
+        }
+        let hotelHtml = ''+
+        '<div class="hotel">'+
+            '<img src="' + hotelPic + '">'+
+            '<div class="hotel-text">'+
+                '<h4>' + hotelName + '</h4>'+
+                '<p><span class="light primary"><i class="las la-map-marker-alt"></i> <i>'+hotelCity+'</i></span></p>'+
+                '<p>' + hotelDesc + '</p>'+
+                '<div class="hotel-button">'+
+                    '<button class="btn-gray btn-small">Voir plus <i class="las la-arrow-right"></i></button>'+
+                '</div>'+
+            '</div>'+
+        '</div>';
+        return hotelHtml;
+    }
+
+    /* *************** init app */
+
+    (function() {
+
+        // On filter button click
+
+        filterHotelsBtn.onclick = () => filterHotels()
+
+        // Set intersectionobserver
 
         let observer = new IntersectionObserver( 
             ()=>{
-                for (let index = 0; index < 5; index++) 
-                {
-                    let datapayload = randomQuotes[ Math.floor( Math.random() * randomQuotes.length ) ];
-                    datapayload['image'] = 'https://picsum.photos/id/' + ( Math.floor( Math.random() * 1000 ) + 1 ) + '/200';
-                    hotelslist.innerHTML += ''+
-                    '<div class="hotel">'+
-                        '<img src="' + datapayload.image + '">'+
-                        '<div class="hotel-text">'+
-                            '<p>' + datapayload.name + '</p>'+
-                            '<p>' + datapayload.desc + '</p>'+
-                        '</div>'+
-                        '<div class="hotel-button">'+
-                            '<button class="btn-primary btn-small">Voir plus</button>'+
-                        '</div>'+
-                    '</div>';
-                }
+                fetchMoreHotels( ( hotels )=>{
+                    if( !hotels )
+                    {
+                        return
+                    }
+                    hotels.forEach(hotel => {
+                        hotelslist.innerHTML += buildHotel( hotel );
+                    });
+                })
             }, 
             { 
                 threshold : [ .1 ] 
             } 
         );
         observer.observe( detectbottom );
+    })();
 
-    });
-})();
 </script>

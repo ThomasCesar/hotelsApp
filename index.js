@@ -9,6 +9,10 @@ const config = require('./config')
 const express = require('express')
 const app = express()
 app.use(express.static('public'))
+app.use(express.json());
+
+// init impala api
+const impala = require('./impala')
 
 // ============ APP ROUTES
 
@@ -33,8 +37,20 @@ app.get(['/','/home'], (req, res) => {
 // ============ SCRIPT ROUTES
 
 app.post('/hotels',(req,res)=>{
-    res.write('getting hotels')
-    res.end()
+    impala.getHotels( 
+        {
+            start : req.body.departure, 
+            end : req.body.return, 
+            country : {eq: req.body.country },
+            // latitude: '58.386186',
+            // longitude: '-9.952549',
+            // radius: '5000',
+            // sortBy: 'distance_m:desc'
+        },
+        ( theHotels )=>{
+        res.write( theHotels )
+        res.end()
+    })
 })
 
 // ============ 404 PAGE
