@@ -1,0 +1,20 @@
+
+:root{
+
+    /* main */
+
+    --body_bck: rgb(255, 255, 255);
+    --main_width : 1200px;
+    --main_padding : 1rem;
+    --nav_height : 5rem;
+
+    /* colors */
+
+    --primary : rgb(32, 85, 198);
+    --primary_light : rgb(196, 213, 251);
+
+    /* other */
+    --box_shadow:0 13px 27px -5px #32325d40,0 8px 16px -8px #0000004d,0 -6px 16px -6px #00000008;
+    --box_shadow_light:0 13px 27px -5px #32325d40,0 8px 16px -8px #0000004d,0 -6px 16px -6px #00000008;
+
+}

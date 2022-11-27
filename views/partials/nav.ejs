@@ -1,0 +1,12 @@
+<nav>
+    <div class="nav-container">
+        <div class="nav-logo">
+            <a href="/">Hotels<b class="primary">.</b></a>
+        </div>
+        <div class="nav-links">
+            <% navMenu.forEach(navItem=> { %>
+                <a href="<%- navItem.link %>" <%- navItem.active ? 'active="true"' : '' %> ><%- navItem.label %></a>
+                <% }); %>
+        </div>
+    </div>
+</nav>

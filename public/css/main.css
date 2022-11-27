@@ -1,0 +1,205 @@
+
+/* =========================== IMPORTS */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;700&display=swap');
+
+/* ============================ CSS RESET */
+
+*,*::before,*::after {
+    box-sizing: border-box;
+}
+* {
+    margin: 0;
+}
+html,body {
+    height: 100%;
+}
+body {
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+}
+img,svg {
+    display: block;
+    max-width: 100%;
+}
+input,button,textarea,select {
+    font: inherit;
+}
+p,h1,h2,h3,h4,h5,h6 {
+    overflow-wrap: break-word;
+}
+a{
+    text-decoration: none;
+    color: inherit;
+}
+
+/* ============================ MAIN */
+
+body{
+    font-family: 'Inter', sans-serif;
+    background: var(--body_bck);
+}
+h1, h2, h3, h4{
+    font-weight: 700;
+}
+p{
+    font-weight: 300;
+}
+
+/* ============================ NAV BAR */
+
+nav{
+    height: var(--nav_height);
+}
+.nav-container{
+    width: 100%;
+    max-width: var(--main_width);
+    padding-inline: var(--main_padding);
+    margin-inline: auto;
+    display: flex;
+    justify-content: space-between;
+}
+.nav-container a{
+    line-height: var(--nav_height);
+}
+.nav-logo a {
+    font-weight: 700;
+    font-size: 1.8rem;
+}
+.nav-links {
+    display: flex;
+    gap: 2rem;
+}
+.nav-links a{
+}
+
+/* ============================ app container */
+
+.app{
+    width: 100%;
+    padding-inline: var(--main_padding);
+    max-width: var(--main_width);
+    margin-inline: auto;
+}
+
+/* ============================ layout components */
+
+[class^='banner-']{
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    min-height: 50vh;
+
+}
+[class^='banner-']>div{
+    flex: 50%;
+}
+[class^='banner-']>div :is(h1,h2,h3,p){
+    margin-bottom: 2rem;
+}
+[class^='banner-']>div h1{
+    line-height: 2.5rem;
+}
+[class^='banner-']>div p{
+    line-height: 2rem;
+    font-size: 1.2rem;
+}
+[class^='banner-']>div svg{
+    width: 100%;
+}
+.banner-hero{
+    background-image: url('../img/building.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    min-height: 70vh;
+    border-radius: 15px;
+    margin-bottom: -50px;
+}
+.banner-hero div{
+    padding: 2rem;
+}
+
+/* ============================ buttons */
+
+:is(a,button)[class^='btn-']{
+    line-height: 2.8rem;
+    font-size: 1.2rem;
+    padding: 0 2rem;
+    text-transform: uppercase;
+    border: none;
+    border: 2px solid transparent;
+    border-radius: 5px;
+}
+a[class^='btn-']{
+    display: inline-block;
+}
+
+:is(a,button).btn-primary{
+    background: var(--primary);
+    color: #ffffff;
+}
+:is(a,button).btn-primary-light{
+    background: var(--primary_light);
+    color: black;
+}
+
+/* ============================ other */
+
+/* search div */
+
+.searchbox{
+    max-width: 1000px;
+    margin-inline: auto;
+    padding: 2rem;
+    background: white;
+    box-shadow: var(--box_shadow_light);
+    border-radius: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* list of hotels */
+
+.hotels-container{
+    position: relative;
+    padding-block:2rem ;
+}
+.hotels-list{
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+
+}
+.hotels-list .hotel {
+    flex: 30%;
+    flex-grow: 1;
+    border-radius: 8px;
+    box-shadow: var(--box_shadow);
+}
+.hotels-list .hotel .hotel-text{
+    padding: 1rem;
+}
+.hotels-detectbottom{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: red;
+    height: 50px;
+}
+
+/* bottom of the hotels list */
+
+svg path.svg-primary{
+    fill: var(--primary);
+}
+
+/* ============================ helper classes */
+
+.primary{
+    color: var(--primary);
+}
+.primary-light{
+    color: var(--primary_light);
+}
