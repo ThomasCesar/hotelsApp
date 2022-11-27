@@ -1,0 +1,24 @@
+{
+  "name": "hotelsapp",
+  "version": "1.0.0",
+  "description": "A web application for finding hotels using the Impala API",
+  "main": "index.js",
+  "scripts": {
+    "devStart": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ThomasCesar/hotelsApp.git"
+  },
+  "author": "Thomas FRANCOIS",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ThomasCesar/hotelsApp/issues"
+  },
+  "homepage": "https://github.com/ThomasCesar/hotelsApp#readme",
+  "dependencies": {
+    "ejs": "^3.1.8",
+    "express": "^4.18.2",
+    "nodemon": "^2.0.20"
+  }
+}
