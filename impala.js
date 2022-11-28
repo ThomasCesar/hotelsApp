@@ -4,7 +4,7 @@
 
 const request = require('request');
 const baseUrl = 'https://sandbox.impala.travel/v1'
-const api_key = require('./implala_config.js')
+const api_key = require('./impala_config.js')
 
 // ================================ GET HOTELS
 
