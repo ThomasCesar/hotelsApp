@@ -19,11 +19,11 @@ const impala = require('./impala')
 const navMenu = [
     {
         link : 'home',
-        label : 'Accueil'
+        label : 'Home'
     },
     {
         link : 'about',
-        label : 'A propos'
+        label : 'About'
     }
 ]
 
@@ -37,16 +37,19 @@ app.get(['/','/home'], (req, res) => {
 // ============ SCRIPT ROUTES
 
 app.post('/hotels',(req,res)=>{
+    
+    // fetch filters
+
+    theFilters = {}
+    if( req.body.departure ) theFilters.start = req.body.departure
+    if( req.body.return ) theFilters.end = req.body.return
+    if( req.body.country ) theFilters.country = {eq: req.body.country }
+    if( req.body.offset ) theFilters.offset = req.body.offset
+
+    // make api request
+
     impala.getHotels( 
-        {
-            start : req.body.departure, 
-            end : req.body.return, 
-            country : {eq: req.body.country },
-            // latitude: '58.386186',
-            // longitude: '-9.952549',
-            // radius: '5000',
-            // sortBy: 'distance_m:desc'
-        },
+        theFilters,
         ( theHotels )=>{
         res.write( theHotels )
         res.end()

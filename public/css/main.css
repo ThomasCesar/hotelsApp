@@ -86,6 +86,7 @@ nav{
     padding-inline: var(--main_padding);
     max-width: var(--main_width);
     margin-inline: auto;
+    padding-bottom: 1rem;
 }
 
 /* ============================ layout components */
@@ -117,7 +118,7 @@ nav{
     background-image: url('../img/building.jpg');
     background-size: cover;
     background-repeat: no-repeat;
-    min-height: 70vh;
+    min-height: 40vh;
     border-radius: 15px;
     margin-bottom: -50px;
 }
@@ -125,7 +126,7 @@ nav{
     padding: 2rem;
 }
 
-/* ============================ buttons */
+/* ============================ buttons & selects */
 
 :is(a,button)[class^='btn-']{
     line-height: 2.8rem;
@@ -156,8 +157,21 @@ a[class^='btn-']{
 
 :is(a,button)[class^='btn-']:hover{
     opacity: 0.85;
+    cursor: pointer;
 }
 
+
+select, input{
+    line-height: 2.8rem;
+    background: none;
+    padding: 0 1rem;
+    border: 1px solid #eee;
+    border-radius: 5px;
+    cursor: pointer;
+}
+select{
+    height: 2.8rem;
+}
 
 /* ============================ other */
 
@@ -179,7 +193,7 @@ a[class^='btn-']{
 
 .hotels-container{
     position: relative;
-    padding-block:2rem ;
+    padding-top:2rem;
 }
 .hotels-list{
     display: grid;
@@ -187,7 +201,15 @@ a[class^='btn-']{
     grid-template-columns: repeat( 3 , 1fr);
 
 }
-.hotels-list .hotel {
+.hotels-error{
+    text-align: center;
+    padding: 2rem 0;
+}
+.hotels-error:empty{
+    display: none;
+}
+
+.hotel {
     flex: 30%;
     flex-grow: 1;
     border-radius: 8px;
@@ -195,19 +217,60 @@ a[class^='btn-']{
     overflow: hidden;
     position: relative;
 }
-.hotels-list .hotel img{
+.hotel img{
+    width: 100%;
     height: 250px;
     object-fit: cover;
 }
-.hotels-list .hotel .hotel-text{
+.hotel .hotel-text{
     padding: 1rem;
 }
-.hotels-list .hotel .hotel-text p{
+.hotel .hotel-text h4{
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.hotel .hotel-text p{
     max-height: 50px;
     overflow: hidden;
     text-overflow: ellipsis;
 }
-.hotels-list .hotel .hotel-button{
+.hotel .hotel-text p{
+    display: -webkit-box;
+    line-clamp: 3;
+   -webkit-line-clamp: 3;
+   -webkit-box-orient: vertical;
+}
+
+.hotel .hotel-misc{
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: space-between;
+}
+.hotel .hotel-misc .city{
+    color: var(--primary);
+}
+
+.stars{--percent : 0%;}
+.stars[data-stars="1"]{--percent : 20%;}
+.stars[data-stars="2"]{--percent : 40%;}
+.stars[data-stars="3"]{--percent : 60%;}
+.stars[data-stars="4"]{--percent : 80%;}
+.stars[data-stars="5"]{--percent : 100%;}
+.hotel .hotel-misc .stars:before{
+    content: '★★★★★';
+    letter-spacing: 4px;
+    background: linear-gradient(90deg, var(--primary) var(--percent), rgb(208, 208, 208) var(--percent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+
+
+
+
+.hotel .hotel-button{
     text-align: right;
 }
 .hotels-detectbottom{
@@ -215,8 +278,8 @@ a[class^='btn-']{
     bottom: 0;
     left: 0;
     right: 0;
-    background: red;
-    height: 50px;
+    background: transparent;
+    height: var(--bottom_loader_size);
 }
 
 /* bottom of the hotels list */
@@ -236,3 +299,67 @@ svg path.svg-primary{
 .light{
     opacity: 0.8;
 }
+
+/* ============================  CSS loader from internet */
+
+.hotels-loader{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: var(--bottom_loader_size);
+}
+.lds-ellipsis {
+    display: inline-block;
+    position: relative;
+    width: 80px;
+    height: 80px;
+  }
+  .lds-ellipsis div {
+    position: absolute;
+    top: 33px;
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    background: var(--primary);
+    animation-timing-function: cubic-bezier(0, 1, 1, 0);
+  }
+  .lds-ellipsis div:nth-child(1) {
+    left: 8px;
+    animation: lds-ellipsis1 0.6s infinite;
+  }
+  .lds-ellipsis div:nth-child(2) {
+    left: 8px;
+    animation: lds-ellipsis2 0.6s infinite;
+  }
+  .lds-ellipsis div:nth-child(3) {
+    left: 32px;
+    animation: lds-ellipsis2 0.6s infinite;
+  }
+  .lds-ellipsis div:nth-child(4) {
+    left: 56px;
+    animation: lds-ellipsis3 0.6s infinite;
+  }
+  @keyframes lds-ellipsis1 {
+    0% {
+      transform: scale(0);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+  @keyframes lds-ellipsis3 {
+    0% {
+      transform: scale(1);
+    }
+    100% {
+      transform: scale(0);
+    }
+  }
+  @keyframes lds-ellipsis2 {
+    0% {
+      transform: translate(0, 0);
+    }
+    100% {
+      transform: translate(24px, 0);
+    }
+  }

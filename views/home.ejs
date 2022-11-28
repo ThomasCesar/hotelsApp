@@ -6,22 +6,23 @@
 
     <div class="banner-hero">
         <div>
-            <h1>Trouver un hotel qui vous convient.</h1>
+            <h1>Find your hotel in Spain or Great Britain.</h1>
             <p>
                 Lorem ipsum dolor sit amet consectetur adipisicing elit. Vitae, placeat doloremque, sapiente accusamus
                 commodium tempore.
             </p>
+        </div>
+        <div>
             <button class="btn-primary">
-                Do something
+                Call to action
                 <i class="las la-arrow-right"></i>
             </button>
         </div>
-        <div></div>
     </div>
 
     <form class="searchbox" id="userFilters">
         <div>
-            <p>Pays</p>
+            <p>Country</p>
             <select name="country">
                 <option value="ESP">Spain</option>
                 <option value="GBA">Great-Britain</option>
@@ -43,9 +44,14 @@
 
     </form>
     <div class="hotels-container">
-        <h1>Vos hotels</h1>
+        <div class="hotels-error" id="hotelsErrors">
+            <p>Search for some hotels in Spain or Great Britain right now.</p>
+        </div>
         <div class="hotels-list" id="hotelslist"></div>
-        <div class="hotels-detectbottom" id="detectbottom"></div>
+        <div class="hotels-loader" id="hotelsLoader" style="display:none;">
+            <div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
+        </div>
+        <div class="hotels-detectbottom" id="detectbottom" ></div>
     </div>
 
 </div>
@@ -60,73 +66,153 @@
 
     const detectbottom = document.getElementById('detectbottom')
     const hotelslist = document.getElementById('hotelslist')
+    const hotelsErrors = document.getElementById('hotelsErrors')
+    const hotelsLoader = document.getElementById('hotelsLoader')
     const filterHotelsBtn = document.getElementById('filterHotelsBtn')
     const userFilters = document.getElementById('userFilters')
+    let theSearchFilters = null
+    
+    let observeBottom = false
 
-    /* *************** init fetch hotels on button click */
+    let foundHotels = []
+    let moreHotelsOffset = null
+    const list_limit = 3
 
-    let filterHotels = () =>{
-        fetchMoreHotels( ( hotels )=>{
-            if( !hotels )
-            {
-                return
-            }
-            hotels.forEach(hotel => {
-                hotelslist.innerHTML += buildHotel( hotel );
-            });
-        })
-    }
+    /* *************** fetch hotels from server */
 
-    /* *************** fetch more hotels */
+    let findHotels = ( nb_hotels_to_list = list_limit ) =>{
 
-    let moreHotelsQuery = null
-    let fetchMoreHotels = ( callback = null ) =>{
+        hotelsErrors.innerHTML = '' 
+        hotelsLoader.style.display = 'flex'
 
-        const userFitlersData = new FormData( userFilters )
-        const theFiltersPayload = {};
-        userFitlersData.forEach((value, key) => (theFiltersPayload[key] = value));
+        // process the search filters
 
-        fetch("/hotels",
+        if( !theSearchFilters )
         {
-            method: "POST",
-            headers: {
-                'Content-type': 'application/json; charset=UTF-8'
-            },
-            body: JSON.stringify( { ...theFiltersPayload, ...{moreHotelsQuery}} )
-        })
-        .then((result)=>{
+            theSearchFilters = {}
+            const userFitlersData = new FormData( userFilters )
+            userFitlersData.forEach((value, key) => (theSearchFilters[key] = value));
+        }
+        if( moreHotelsOffset )
+        {
+            theSearchFilters.offset = moreHotelsOffset
+        }
+        
+        // query the hotels
+
+        fetch(
+            "/hotels",
+            {
+                method: "POST",
+                headers: {
+                    'Content-type': 'application/json; charset=UTF-8'
+                },
+                body: JSON.stringify( theSearchFilters )
+            }
+        ).then((result)=>{
             return result.json();
         }).then((result)=>{
+
+            // bad request
+
+            if( result.code && result.code == 'BAD_REQUEST' )
+            {
+                hotelsErrors.innerHTML = '<h2>Error</h2><p>' + result.message + '</p>'
+                hotelsLoader.style.display = 'none'
+                return
+            }
+
+            // no result
+
+            else if( !result.data || !result.data.length )
+            {
+                hotelsErrors.innerHTML = '<h2>No result</h2><p>No hotel found for your search</p>'
+                hotelsLoader.style.display = 'none'
+                return
+            }
+
+
+            // save all hotels
+
+            if( result.data )
+            {
+                foundHotels = result.data
+            }
 
             // process the pagination and the next load
 
             if( result.pagination.next )
             {
-                moreHotelsQuery = result.pagination.next
+                const urlParams = new URLSearchParams( result.pagination.next );
+                if( urlParams.offset )
+                {
+                    moreHotelsOffset = urlParams.offset
+                }
             }
             
-            // build all hotel cards
+            // list a few of the found hotels
 
-            if( result.data )
-            {
-                result.data.forEach(hotelData => {
-                    const oneHotelHTML = buildHotel( hotelData )
-                    hotelslist.innerHTML += oneHotelHTML
-                });
-            }
+            listHotels( nb_hotels_to_list )
+            
         })
+    }
+
+    /* *************** init fetch hotels on button click */
+
+    let listHotels = ( nb_hotels_to_list = list_limit ) =>{
+        
+        // listing hotels from the payload
+        
+        listed = 1
+        while (foundHotels.length && listed<=nb_hotels_to_list ) 
+        {
+            buildHotelInList( foundHotels[0] )
+            foundHotels.splice(0, 1)
+            listed ++
+        }
+
+        // if there was not enought in the payload
+
+        if( listed < nb_hotels_to_list )
+        {
+
+            // if we can load more from the api, do it
+
+            if( moreHotelsOffset )
+            {
+                let nb_left_to_list = nb_hotels_to_list - listed
+                findHotels( nb_left_to_list )
+            }
+
+            // if there is no more to fetch, everything is loaded on the page for this search, disable the observer
+
+            else
+            {
+                toggleBottomLoad( false )
+            }
+            
+        }
+
+        // we have been able to list as much as we wanted from the payload, there might still be some
+
+        else
+        {
+            toggleBottomLoad( true )
+        }
+
+
     }
 
     /* *************** build single hotel card */
 
-    let buildHotel = ( data ) =>{
-        console.log( data )
+    let buildHotelInList = ( data ) =>{
         let hotelName = data.name
         let hotelId = data.hotelId
         let hotelCity = data.address.city
         let hotelDesc = data.description.short
-        let hotelPic = null
-        if( data.images )
+        let hotelStars = data.starRating
+        let hotelPic = 'img/building_placeholder.jpg'
+        if( data.images && data.images.length )
         {
             hotelPic = data.images[0].url
         }
@@ -135,14 +221,31 @@
             '<img src="' + hotelPic + '">'+
             '<div class="hotel-text">'+
                 '<h4>' + hotelName + '</h4>'+
-                '<p><span class="light primary"><i class="las la-map-marker-alt"></i> <i>'+hotelCity+'</i></span></p>'+
+                '<div class="hotel-misc">'+
+                    '<span class="city"><i>'+hotelCity+'</i></span>'+
+                    '<span class="stars" data-stars="' + hotelStars + '"></span>'+
+                '</div>'+
                 '<p>' + hotelDesc + '</p>'+
                 '<div class="hotel-button">'+
                     '<button class="btn-gray btn-small">Voir plus <i class="las la-arrow-right"></i></button>'+
                 '</div>'+
             '</div>'+
-        '</div>';
-        return hotelHtml;
+        '</div>'
+        hotelslist.innerHTML += hotelHtml
+    }
+
+
+    /* ************** Enable intersectionobserver to detect bottom */
+
+    let toggleBottomLoad = ( toggle = true ) =>{
+        if( toggle )
+        {
+            hotelsLoader.style.display = 'flex'
+            observeBottom = true
+            return
+        }
+        hotelsLoader.style.display = 'none'
+        observeBottom = false
     }
 
     /* *************** init app */
@@ -151,27 +254,31 @@
 
         // On filter button click
 
-        filterHotelsBtn.onclick = () => filterHotels()
+        filterHotelsBtn.onclick = () => {
+            theSearchFilters = null
+            hotelslist.innerHTML = '';
+            findHotels()
+        }
 
         // Set intersectionobserver
 
         let observer = new IntersectionObserver( 
             ()=>{
-                fetchMoreHotels( ( hotels )=>{
-                    if( !hotels )
+                setTimeout(() => {
+                    if( !observeBottom )
                     {
                         return
                     }
-                    hotels.forEach(hotel => {
-                        hotelslist.innerHTML += buildHotel( hotel );
-                    });
-                })
+                    listHotels()
+                }, 2000 );
+                
             }, 
             { 
                 threshold : [ .1 ] 
             } 
         );
         observer.observe( detectbottom );
+        
     })();
 
 </script>
