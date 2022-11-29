@@ -33,6 +33,36 @@ app.get(['/','/home'], (req, res) => {
         { navMenu }
     )
 })
+app.get('/hotel', (req, res) => {
+    const hotelId = req.query.hotelId
+    const theHotel = impala.getHotel( 
+        hotelId,
+        ( payload )=>{
+            const hotelData = JSON.parse(payload)
+            
+            // hotel non trouvé
+
+            if( !hotelData || hotelData.code == 'VALIDATION_ERROR')
+            {
+                res.status(404)
+                res.render('404.ejs',{ navMenu })
+                res.end()
+                return
+            }
+
+            // trouver l'image principale
+
+            let hotelHeroImage = impala.findHotelHeroImage( hotelData )
+
+            // page de l'hotel
+
+            res.render(
+                'hotel.ejs',
+                { navMenu, hotelData, hotelHeroImage }
+            )
+        }
+    )
+})
 
 // ============ SCRIPT ROUTES
 

@@ -214,7 +214,13 @@
         let hotelPic = 'img/building_placeholder.jpg'
         if( data.images && data.images.length )
         {
-            hotelPic = data.images[0].url
+            var heroImage = data.images.find( img => {
+                return img.isHeroImage == true
+            })
+            if( heroImage )
+            {
+                hotelPic = heroImage.url
+            }
         }
         let hotelHtml = ''+
         '<div class="hotel">'+
@@ -227,7 +233,7 @@
                 '</div>'+
                 '<p>' + hotelDesc + '</p>'+
                 '<div class="hotel-button">'+
-                    '<button class="btn-gray btn-small">Voir plus <i class="las la-arrow-right"></i></button>'+
+                    '<a class="btn-gray btn-small" href="/hotel?hotelId=' + hotelId + '">Voir plus <i class="las la-arrow-right"></i></a>'+
                 '</div>'+
             '</div>'+
         '</div>'

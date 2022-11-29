@@ -10,7 +10,6 @@ const api_key = config.api_key
 // ================================ GET HOTELS
 
 exports.getHotels = ( filters, callback ) => {
-    // filters = { size : 10 }
     request(
         {
             method: 'GET',
@@ -26,8 +25,36 @@ exports.getHotels = ( filters, callback ) => {
             {
                 throw new Error(error);
             }
-            // console.log(body )
             callback( body )
         }
     )
+}
+exports.getHotel = ( idHotel, callback ) => {
+    request(
+        {
+            method: 'GET',
+            url: baseUrl + '/hotels/' + idHotel,
+            headers: {
+                'Content-Type': 'application/json',
+                'X-API-KEY': api_key
+            }
+        }
+        , (error, response, body)=>{
+            if (error)
+            {
+                throw new Error(error);
+            }
+            callback( body )
+        }
+    )
+}
+exports.findHotelHeroImage = ( hotelData ) =>{
+    if( !hotelData || !hotelData.images.length )
+    {
+        return null
+    }
+    var heroImage = hotelData.images.find( img => {
+        return img.isHeroImage == true
+    })
+    return heroImage
 }

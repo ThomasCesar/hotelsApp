@@ -114,6 +114,12 @@ nav{
 [class^='banner-']>div svg{
     width: 100%;
 }
+[class^='banner-']>div img{
+    width: 100%;
+    max-height: 500px;
+    object-fit: cover;
+    border-radius: 10px;
+}
 .banner-hero{
     background-image: url('../img/building.jpg');
     background-size: cover;
